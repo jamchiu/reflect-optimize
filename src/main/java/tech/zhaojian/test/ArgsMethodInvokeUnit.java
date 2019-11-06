@@ -1,18 +1,14 @@
 package tech.zhaojian.test;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import tech.zhaojian.domain.TestUser;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
  * 执行对象方法测试
  */
-public class MethodInvokeUnit{
+public class ArgsMethodInvokeUnit {
     public static final int INVOKE_TIME = 100000000;
     public static void main(String[] args) throws Exception{
         for (int i = 0; i < 5; i++) {
@@ -33,7 +29,7 @@ public class MethodInvokeUnit{
         //start
         TestUser testUser = new TestUser();
         for (int i = 0; i < INVOKE_TIME; i++) {
-            testUser.walk();
+            testUser.say("hello");
         }
         //end
         long endTime = System.currentTimeMillis();
@@ -42,16 +38,16 @@ public class MethodInvokeUnit{
 
     /**
      * 通过反射的方式执行方法
-     * 平均耗时：350ms
+     * 平均耗时：400ms
      */
     public static void invokeByReflect() throws Exception {
         long startTime = System.currentTimeMillis();
         //start
         Class<?> testUserClazz = Class.forName("tech.zhaojian.domain.TestUser");
         TestUser testUser = (TestUser) testUserClazz.newInstance();
-        Method walk = testUserClazz.getMethod("walk");
+        Method say = testUserClazz.getMethod("say",String.class);
         for (int i = 0; i < INVOKE_TIME; i++) {
-            walk.invoke(testUser);
+            say.invoke(testUser,"hello");
         }
         //end
         long endTime = System.currentTimeMillis();
@@ -60,17 +56,17 @@ public class MethodInvokeUnit{
 
     /**
      * 通过反射 setAccessible=true 方式执行方法
-     * 平均耗时：300ms
+     * 平均耗时：390ms
      */
     public static void invokeByReflectOptimize() throws Exception {
         long startTime = System.currentTimeMillis();
         //start
         Class<?> testUserClazz = Class.forName("tech.zhaojian.domain.TestUser");
         TestUser testUser = (TestUser) testUserClazz.newInstance();
-        Method walk = testUserClazz.getMethod("walk");
-        walk.setAccessible(true);
+        Method say = testUserClazz.getMethod("say",String.class);
+        say.setAccessible(true);
         for (int i = 0; i < INVOKE_TIME; i++) {
-            walk.invoke(testUser);
+            say.invoke(testUser,"hello");
         }
         //end
         long endTime = System.currentTimeMillis();
@@ -79,7 +75,7 @@ public class MethodInvokeUnit{
 
     /**
      * 通过ReflectASM包的方式执行方法
-     * 平均耗时：800ms
+     * 平均耗时：900ms
      */
     public static void invokeByReflectASM() throws Exception {
         long startTime = System.currentTimeMillis();
@@ -90,7 +86,7 @@ public class MethodInvokeUnit{
         MethodAccess access = MethodAccess.get(TestUser.class);
 
         for (int i = 0; i < INVOKE_TIME; i++) {
-            access.invoke(testUser, "walk");
+            access.invoke(testUser, "say","hello");
         }
         //end
         long endTime = System.currentTimeMillis();

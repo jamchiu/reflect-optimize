@@ -91,7 +91,7 @@ public class ObjectCreateUnit {
      * 通过ReflectASM包的方式创建对象
      * 平均耗时：20ms
      */
-    public void invokeByReflectASM(){
+    public void createByReflectASM(){
         ConstructorAccess<TestUser> access = ConstructorAccess.get(TestUser.class);
         for (int i = 0; i < 1000000; i++) {
             access.newInstance();
